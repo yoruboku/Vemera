@@ -57,7 +57,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .hero { height: 110vh; border-radius: 24px; position: relative; overflow: hidden; display: flex; align-items: flex-end; margin-bottom: 50px; box-shadow: 0 40px 80px rgba(0,0,0,0.5); border: 1px solid var(--border); transition: 0.5s; }
-        /* Fix cropping with top center alignment */
+        /* fix */
         .hero-bg { position: absolute; inset: 0; background-size: cover; background-position: top center; transition: opacity 0.8s ease-in-out; }
         .hero-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, var(--bg) 0%, transparent 100%); }
         .hero-content { position: relative; z-index: 2; padding: 60px; max-width: 900px; opacity: 1; transition: opacity 0.5s; zoom: 0.8; }
@@ -183,6 +183,15 @@
         /* CUSTOM HUE SLIDER (WEB BASED) */
         .hue-slider { -webkit-appearance: none; width: 100%; height: 15px; border-radius: 10px; margin: 25px 0; background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%); outline: none; cursor: pointer; }
         .hue-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: white; border: 4px solid #111; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        
+        /* TOGGLE SWITCH */
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #333; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:focus + .slider { box-shadow: 0 0 1px var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
     </style>
 </head>
 <body>
@@ -226,7 +235,7 @@
             <div class="menu-drop" id="menu">
                 <div class="menu-item" onclick="app.modals.profile()">Profile</div>
                 <div class="menu-item" onclick="app.modals.watchlist()">Watchlist</div>
-                <div class="menu-item" onclick="app.modals.finished()">Finished</div>
+                <div class="menu-item" onclick="app.modals.finished()">Watched</div>
                 <div class="menu-item" onclick="app.modals.settings()">Settings</div>
                 <div class="menu-item" onclick="app.modals.history()">History</div>
                 <div class="menu-item" onclick="app.logout()" style="color:#ef4444">Logout</div>
@@ -276,7 +285,7 @@
         <div id="view-search" class="view">
             <div class="adv-head">
                 <div class="adv-main-bar">
-                    <input type="text" id="adv-input" class="adv-input" placeholder="Search title or enter IMDb ID (tt...)" onkeyup="app.runAdvSearch()">
+                    <input type="text" id="adv-input" class="adv-input" placeholder="Search titles..." onkeyup="app.runAdvSearch()">
                     <button class="btn btn-glass" onclick="app.advRandom()">🎲 Random</button>
                 </div>
                 
@@ -285,7 +294,6 @@
                         <option value="multi">All Types</option>
                         <option value="movie">Movies</option>
                         <option value="tv">TV Shows</option>
-                        <option value="anime">Anime</option>
                         <option value="person">People</option>
                     </select>
                     
@@ -308,7 +316,7 @@
 
                     <input type="number" id="adv-year" class="custom-select" placeholder="Year" style="width:100px" oninput="app.runAdvSearch()">
                     
-                    <input type="text" id="adv-tmdb" class="custom-select" placeholder="TMDB ID" style="width:120px">
+                    <input type="text" id="adv-tmdb" class="custom-select" placeholder="TMDB/IMDb ID" style="width:140px">
                     <button class="btn btn-glass" style="padding: 8px 15px;" onclick="app.openId()">Go</button>
                 </div>
             </div>
@@ -324,10 +332,51 @@
 
     <div id="modal-detail" class="modal-over"> <div class="modal"> <button class="btn-icon" style="position:absolute; top:20px; right:20px; z-index:100" onclick="app.closeModals()">✕</button> <div class="modal-left"> <img id="dm-poster" class="modal-poster"> </div> <div class="modal-right"> <div id="dm-meta" class="dm-meta"></div> <h1 id="dm-title" style="font-size:3rem; font-weight:800; line-height:1; margin-bottom:20px">Title</h1> <p id="dm-desc"></p> <div id="dm-mov" style="display:none"> <div style="display:flex; gap:15px; margin-bottom: 30px"> <button class="btn btn-primary" id="dm-play">▶ PLAY MOVIE</button> <button class="btn btn-primary" id="dm-trailer-mov" style="background: #ef4444; border-color: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);">Trailer</button> <button class="btn btn-glass" id="dm-wl-mov" style="width: 50px; padding: 0; justify-content: center;">+</button> </div> <div id="dm-col-wrap" style="display:none; margin-top:10px;"> <h3 id="dm-col-title" style="color:var(--primary); margin-bottom:10px">Collection</h3> <div class="col-list" id="dm-col-list"></div> </div> </div> <div id="dm-tv" style="display:none"> <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center"> <div style="display:flex; gap:15px; align-items:center"> <h3 style="font-weight:700">Episodes</h3> <button class="btn btn-primary" id="dm-trailer-tv" style="padding: 5px 15px; font-size: 0.8rem; background: #ef4444; border-color: #ef4444;">Trailer</button> <button class="btn btn-glass" id="dm-wl-tv" style="padding: 5px 15px; font-size: 0.8rem;">+ WL</button> </div> <select id="dm-season" class="custom-select" onchange="app.renderEps(this.value)"></select> </div> <div class="ep-grid" id="dm-eps"></div> </div> </div> </div> </div>
     <div id="player"> <div class="p-bar"> <button class="btn btn-glass" onclick="player.close()">EXIT</button> <select id="srv-sel" class="custom-select" onchange="player.setServer(this.value)"></select> <div style="flex:1"></div> <button class="btn btn-glass" style="margin-right:10px" onclick="player.info()">INFO</button> <button class="btn btn-primary" id="p-next" style="display:none; margin-right:10px" onclick="player.next()">NEXT EP</button> <button class="btn btn-primary" onclick="player.toggleSb()">LIST</button> </div> <div class="p-wrapper"> <iframe id="iframe" allowfullscreen></iframe> <div class="p-sidebar" id="sidebar"> <div class="sb-head"> <h3 id="sb-title">Content</h3> <button class="btn-icon" onclick="player.toggleSb()">✕</button> </div> <div style="padding:15px; border-bottom:1px solid rgba(255,255,255,0.1); display:none" id="sb-season-wrap"> <select id="sb-season" class="custom-select" style="width:100%" onchange="player.loadSbEps(this.value)"></select> </div> <div class="sb-list" id="sb-list"></div> </div> </div> </div>
-    <div id="modal-settings" class="modal-over"> <div class="modal box-modal"> <h2>Theme Color</h2> <input type="range" id="hue-slider-input" class="hue-slider" min="0" max="360" oninput="app.theme(this.value)"> <input type="text" id="hue-hex-input" class="custom-select" style="width: 120px; text-align: center; margin-top: -15px; margin-bottom: 15px;" onchange="app.themeFromHex(this.value)"> <button class="btn btn-glass" style="width:100%" onclick="app.closeModals()">Done</button> </div> </div>
+    <div id="modal-settings" class="modal-over"> 
+        <div class="modal box-modal"> 
+            <h2>Settings</h2>
+            
+            <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:20px;">
+                <div style="text-align:left">
+                    <div style="font-weight:600; margin-bottom:5px; display:flex; align-items:center; gap:8px;">
+                        Extended Search
+                        <div style="background:#333; color:#ccc; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; cursor:help; font-weight:700" title="Enabling extended search (OMDb) may increase results but can include lower quality or irrelevant content.">?</div>
+                    </div>
+                    <div style="font-size:0.8rem; color:#888">Include OMDb results in Advanced Search</div>
+                </div>
+                <label class="switch">
+                     <input type="checkbox" id="sett-omdb" onchange="localStorage.setItem('v_omdb_adv', this.checked ? '1' : '0')">
+                     <span class="slider"></span>
+                </label>
+            </div>
+
+            <h2>Theme Color</h2> 
+            <input type="range" id="hue-slider-input" class="hue-slider" min="0" max="360" oninput="app.theme(this.value)"> 
+            <select id="hue-select" class="custom-select" style="width: 100%; margin-top: -10px; margin-bottom: 20px;" onchange="app.theme(this.value)">
+                <option value="0">Red</option>
+                <option value="30">Orange</option>
+                <option value="45">Amber</option>
+                <option value="60">Yellow</option>
+                <option value="90">Lime</option>
+                <option value="120">Green</option>
+                <option value="150">Emerald</option>
+                <option value="180">Teal</option>
+                <option value="195">Cyan</option>
+                <option value="210">Sky</option>
+                <option value="225">Blue</option>
+                <option value="240">Indigo (Default)</option>
+                <option value="260">Violet</option>
+                <option value="270">Purple</option>
+                <option value="300">Fuchsia</option>
+                <option value="330">Pink</option>
+                <option value="345">Rose</option>
+            </select>
+            <button class="btn btn-glass" style="width:100%" onclick="app.closeModals()">Done</button> 
+        </div> 
+    </div>
     <div id="modal-profile" class="modal-over"> <div class="modal box-modal" style="width: 400px; text-align: center; height: auto; flex-direction:column; gap:20px;"> <div style="width: 80px; height: 80px; background: var(--surface-2); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center;"> <svg class="icon" style="width: 40px; height: 40px;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> </div> <h2 id="p-username">User</h2> <div style="display: flex; gap: 10px; justify-content: center;"> <div style="background: var(--surface-2); padding: 10px; border-radius: 8px; flex: 1;"> <div style="font-weight: 800; font-size: 1.2rem; color: var(--primary)" id="p-stats-hist">0</div> <div style="font-size: 0.8rem; color: #888">Watched</div> </div> <div style="background: var(--surface-2); padding: 10px; border-radius: 8px; flex: 1;"> <div style="font-weight: 800; font-size: 1.2rem; color: var(--primary)" id="p-stats-wl">0</div> <div style="font-size: 0.8rem; color: #888">Watchlist</div> </div> </div> <button class="btn btn-glass" style="width:100%" onclick="app.closeModals()">Close</button> </div> </div>
     <div id="modal-watchlist" class="modal-over"> <div class="modal" style="flex-direction:column; max-height:80vh; border-radius: 12px; position: relative;"> <button class="btn-icon" style="position:absolute; top:15px; right:15px; z-index:10" onclick="app.closeModals()">✕</button> <div class="sb-head" style="background:transparent; padding:0; border:none; margin-bottom:20px; display:flex; flex-direction:column; align-items:center; gap:10px; margin-top: 10px;"> <h2 style="font-weight: 800; font-size: 2rem;">Watchlist</h2> <select id="wl-filter" class="custom-select" onchange="app.modals.watchlist()" style="width: 200px;"> <option value="all">All</option> <option value="movie">Movies</option> <option value="tv">TV Shows</option> <option value="anime">Anime</option> </select> </div> <div id="wl-grid" class="grid" style="flex:1; overflow-y:auto; padding:5px 20px 20px;"></div> </div> </div>
-    <div id="modal-finished" class="modal-over"> <div class="modal" style="flex-direction:column; max-height:80vh; border-radius: 12px; position: relative;"> <button class="btn-icon" style="position:absolute; top:15px; right:15px; z-index:10" onclick="app.closeModals()">✕</button> <div class="sb-head" style="background:transparent; padding:0; border:none; margin-bottom:20px; display:flex; flex-direction:column; align-items:center; gap:10px; margin-top: 10px;"> <h2 style="font-weight: 800; font-size: 2rem;">Finished</h2> </div> <div id="fin-grid" class="grid" style="flex:1; overflow-y:auto; padding:5px 20px 20px;"></div> </div> </div>
+    <div id="modal-finished" class="modal-over"> <div class="modal" style="flex-direction:column; max-height:80vh; border-radius: 12px; position: relative;"> <button class="btn-icon" style="position:absolute; top:15px; right:15px; z-index:10" onclick="app.closeModals()">✕</button> <div class="sb-head" style="background:transparent; padding:0; border:none; margin-bottom:20px; display:flex; flex-direction:column; align-items:center; gap:10px; margin-top: 10px;"> <h2 style="font-weight: 800; font-size: 2rem;">Watched</h2> <select id="fin-filter" class="custom-select" onchange="app.modals.finished()" style="width: 200px;"> <option value="all">All</option> <option value="movie">Movies</option> <option value="tv">TV Shows</option> <option value="anime">Anime</option> </select> </div> <div id="fin-grid" class="grid" style="flex:1; overflow-y:auto; padding:5px 20px 20px;"></div> </div> </div>
     <div id="modal-history" class="modal-over"> <div class="modal" style="flex-direction:column; max-height:80vh; border-radius: 12px; position: relative;"> <button class="btn-icon" style="position:absolute; top:15px; right:15px; z-index:10" onclick="app.closeModals()">✕</button> <div class="sb-head" style="background:transparent; padding:0; border:none; margin-bottom:20px; display:flex; flex-direction:column; align-items:center; gap:10px; margin-top: 10px;"> <h2 style="font-weight: 800; font-size: 2rem;">History</h2> <button class="btn btn-primary" style="background:#ef4444" onclick="app.clearHist()">Clear All</button> </div> <div id="hist-list" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding: 0 20px 20px;"></div> </div> </div>
     <div id="modal-adblock" class="modal-over" style="z-index: 6000;"> <div class="modal box-modal" style="width: 400px; text-align: center; height: auto; flex-direction:column; gap:20px;"> <h2 style="color: #ef4444; font-weight: 800;">⚠️ Adblock Recommended</h2> <p style="color: #ccc; line-height: 1.6;"> The external video servers often contain pop-up ads. <br> We highly recommend using an <b>Adblocker</b> extension for the best viewing experience. </p> <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="localStorage.setItem('v_welcome', '1'); document.getElementById('modal-adblock').style.display='none'"> I Understand </button> </div> </div>
     <div id="modal-trailer" class="modal-over"> <div class="trailer-box"> <button class="trailer-close" onclick="app.closeTrailer()">✕</button> <iframe id="trailer-frame" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe> </div> </div>
@@ -335,7 +384,7 @@
 
     <script>
         // THEY ARE THE FREE API KEYS ITS USELESS TO STEAL JUST GET UR OWN
-        const API = "901356ce016930c183cf5a6964279378" // TMDB API KEY
+        const API = "901356ce016930c183cf5a6964279378"; // TMDB API KEY
         const OMDB_KEY = "42c10556"; // OMDb API KEY
         
         function hexToHSL(H) {
@@ -556,9 +605,11 @@
             req: async (e) => (await fetch(`https://api.themoviedb.org/3/${e}${e.includes('?')?'&':'?'}api_key=${API}`)).json(),
             
             // OMDb Request Helper
-            reqOmdb: async (s, page=1) => {
+            reqOmdb: async (s, page=1, type='') => {
                 try {
-                    const res = await fetch(`https://www.omdbapi.com/?s=${encodeURIComponent(s)}&page=${page}&apikey=${OMDB_KEY}`);
+                    let u = `https://www.omdbapi.com/?s=${encodeURIComponent(s)}&page=${page}&apikey=${OMDB_KEY}`;
+                    if(type) u += `&type=${type}`;
+                    const res = await fetch(u);
                     return await res.json();
                 } catch(e) { return { Response: "False" }; }
             },
@@ -1020,7 +1071,7 @@
             toggleFin: (item) => {
                 if(!app.state.user) return;
                 let f = JSON.parse(localStorage.getItem('v_fin_'+app.state.user)||'[]');
-                const idx = f.findIndex(x=>x.id===item.id);
+                const idx = f.findIndex(x=>String(x.id)===String(item.id));
                 if(idx > -1) f.splice(idx, 1);
                 else f.unshift({ id:item.id, type:item.type, poster_path:item.poster_path, title:item.title||item.name });
                 localStorage.setItem('v_fin_'+app.state.user, JSON.stringify(f));
@@ -1073,11 +1124,14 @@
             nav: (v) => { document.querySelectorAll('.view').forEach(e=>e.style.display='none'); document.getElementById('view-'+v).style.display='block'; window.scrollTo(0,0); },
             toggleMenu: () => { const m=document.getElementById('menu'); m.style.display=m.style.display==='flex'?'none':'flex'; },
             modals: {
-                settings: () => document.getElementById('modal-settings').style.display='flex',
+                settings: () => {
+                    document.getElementById('modal-settings').style.display='flex';
+                    document.getElementById('sett-omdb').checked = localStorage.getItem('v_omdb_adv') === '1';
+                },
                 profile: () => {
                     document.getElementById('modal-profile').style.display='flex';
                     document.getElementById('p-username').innerText = app.state.user;
-                    document.getElementById('p-stats-hist').innerText = JSON.parse(localStorage.getItem('v_hist_'+app.state.user)||'[]').length;
+                    document.getElementById('p-stats-hist').innerText = JSON.parse(localStorage.getItem('v_fin_'+app.state.user)||'[]').length;
                     document.getElementById('p-stats-wl').innerText = JSON.parse(localStorage.getItem('v_wl_'+app.state.user)||'[]').length;
                 },
                 watchlist: () => {
@@ -1107,9 +1161,19 @@
                 finished: () => {
                     document.getElementById('modal-finished').style.display='flex';
                     const f = JSON.parse(localStorage.getItem('v_fin_'+app.state.user)||'[]');
+                    const filter = document.getElementById('fin-filter').value;
                     const l = document.getElementById('fin-grid'); l.innerHTML='';
-                    if(f.length === 0) l.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; color:#666">No finished items</div>';
-                    f.forEach(i => {
+                    
+                    const filtered = filter === 'all' ? f : f.filter(i => {
+                        const isAnime = i.type === 'anime' || (i.genre_ids?.includes(16) && i.original_language === 'ja');
+                        if (filter === 'anime') return isAnime;
+                        if (filter === 'movie') return !isAnime && i.type === 'movie';
+                        if (filter === 'tv') return !isAnime && i.type === 'tv';
+                        return i.type === filter;
+                    });
+                    
+                    if(filtered.length === 0) l.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px; color:#666">No finished items</div>';
+                    filtered.forEach(i => {
                         const c = document.createElement('div'); c.className='card'; 
                         const isOmdb = String(i.id).startsWith('tt');
                         const pSrc = isOmdb ? i.poster_path : `https://image.tmdb.org/t/p/w300${i.poster_path}`;
@@ -1152,14 +1216,8 @@
                 localStorage.setItem('v_hue', v);
                 const slider = document.getElementById('hue-slider-input');
                 if (slider) slider.value = v;
-                const hexInput = document.getElementById('hue-hex-input');
-                if (hexInput) hexInput.value = hslToHex(v, 80, 65);
-            },
-
-            themeFromHex: (hex) => {
-                if(!/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hex)) return;
-                const { h } = hexToHSL(hex);
-                app.theme(h);
+                const select = document.getElementById('hue-select');
+                if (select) select.value = v;
             },
             
             goToAdvSearch: (q) => {
@@ -1187,14 +1245,6 @@
                                if(btn) btn.remove();
                             }
             
-                            // ID Search (IMDb/TMDB)
-                            if(q.match(/^tt\d+$/) || (type==='multi' && q.match(/^\d+$/))) {
-                                if(q.startsWith('tt')) {
-                                    app.open(q, 'movie');
-                                    return;
-                                }
-                            }
-            
                             let tmdbResults = [];
                             let omdbResults = [];
                             let tmdbData = {};
@@ -1204,12 +1254,13 @@
                             let url = '';
                             if(q) {
                                 if(type === 'person') url = `search/person?query=${q}&page=${app.state.adv.page}`;
+                                else if(type === 'movie') url = `search/movie?query=${q}&page=${app.state.adv.page}`;
+                                else if(type === 'tv') url = `search/tv?query=${q}&page=${app.state.adv.page}`;
                                 else url = `search/multi?query=${q}&page=${app.state.adv.page}`;
                             } else {
                                 // Recommendations logic
                                 const sort = 'sort_by=popularity.desc';
-                                if(type === 'anime') url = `discover/tv?with_genres=16&with_original_language=ja&${sort}`;
-                                else if(type === 'movie') url = `discover/movie?${sort}`;
+                                if(type === 'movie') url = `discover/movie?${sort}`;
                                 else if(type === 'tv') url = `discover/tv?${sort}`;
                                 else url = `discover/movie?${sort}`; 
                                 url += `&page=${app.state.adv.page}`;
@@ -1219,7 +1270,7 @@
                                 if (q) {
                                     url += `&primary_release_year=${year}&first_air_date_year=${year}`;
                                 } else {
-                                    if(type === 'tv' || type === 'anime') url += `&first_air_date_year=${year}`;
+                                    if(type === 'tv') url += `&first_air_date_year=${year}`;
                                     else url += `&primary_release_year=${year}`;
                                 }
                             }
@@ -1230,8 +1281,13 @@
                             });
                             
                             // 2. OMDb Fetch
-                            const omdbPromise = (q && type !== 'person' && type !== 'anime') 
-                                ? app.reqOmdb(q, app.state.adv.page).then(d => {
+                            const useOmdb = localStorage.getItem('v_omdb_adv') === '1';
+                            let omdbType = '';
+                            if(type === 'movie') omdbType = 'movie';
+                            else if(type === 'tv') omdbType = 'series';
+
+                            const omdbPromise = (useOmdb && q && type !== 'person') 
+                                ? app.reqOmdb(q, app.state.adv.page, omdbType).then(d => {
                                     omdbResults = d.Search || [];
                                     omdbData = d;
                                 }) 
@@ -1424,7 +1480,7 @@
             },
 
             openId: () => {
-                const id = document.getElementById('adv-tmdb').value;
+                const id = document.getElementById('adv-tmdb').value.trim();
                 if(id) app.open(id, 'movie');
             },
 
