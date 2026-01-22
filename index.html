@@ -431,13 +431,11 @@
         // SERVERS - Supports TMDB ID or IMDb ID (tt...)
         const SERVERS = [
             { n: "VidLink (Best)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://vidlink.pro/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
-            { n: "VidSrc.ru", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://vidsrc-embed.ru/embed/${t}/${id}${t=='tv'?`/${s}-${e}`:''}` },
-            { n: "Fmovies", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://fmovies4u.com/embed/${t}/${id}${t=='tv'?`/${s}/${e}`:''}?autoPlay=true` },
-            { n: "RiveStream", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://rivestream.org/embed?type=${t}&id=${id}${t=='tv'?`&season=${s}&episode=${e}`:''}` },
-            { n: "VidKing", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://www.vidking.net/embed/${t}/${id}${t=='tv'?`/${s}/${e}`:''}?color=9146ff` },
-            { n: "VidFast", types: ['movie','tv'], u: (id,t,s,e) => `https://vidfast.pro/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
-            { n: "Videasy", types: ['movie','tv'], u: (id,t,s,e) => `https://player.videasy.net/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
-            { n: "VidZee", types: ['movie','tv'], u: (id,t,s,e) => `https://player.vidzee.wtf/embed/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
+            { n: "Videasy (best)", types: ['movie','tv'], u: (id,t,s,e) => `https://player.videasy.net/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
+            { n: "VidSrc (good)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://vidsrc-embed.ru/embed/${t}/${id}${t=='tv'?`/${s}-${e}`:''}` },
+            { n: "VidFast (fast)", types: ['movie','tv'], u: (id,t,s,e) => `https://vidfast.pro/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
+            { n: "VidZee (many langs)", types: ['movie','tv'], u: (id,t,s,e) => `https://player.vidzee.wtf/embed/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
+            { n: "RiveStream (most servers)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://rivestream.org/embed?type=${t}&id=${id}${t=='tv'?`&season=${s}&episode=${e}`:''}` },
         ];
 
         const app = {
