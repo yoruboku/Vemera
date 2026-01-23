@@ -118,7 +118,8 @@
         .card-wl { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.2s; z-index: 10; font-weight: 700; font-size: 1.2rem; }
         .card:hover .card-meta, .card:hover .card-wl { opacity: 1; }
         .card-wl:hover { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; align-items: start; align-content: start; grid-auto-rows: min-content; }
+        .grid .card { flex: none; width: 100%; height: auto; position: relative; aspect-ratio: 2/3; margin-bottom: 0; }
 
         .adv-head { margin-bottom: 40px; display: flex; flex-direction: column; gap: 20px; }
         .adv-main-bar { display: flex; gap: 15px; }
@@ -147,11 +148,11 @@
         .col-item:hover { transform: translateY(-5px); }
         
         /* --- 6. PLAYER --- */
-        #player { position: fixed; inset: 0; background: black; z-index: 5000; display: none; flex-direction: column; }
-        .p-bar { width: 100%; height: 70px; padding: 0 30px; background: #111; border-bottom: 1px solid #222; display: flex; gap: 20px; align-items: center; z-index: 20; }
+        #player { position: fixed; inset: 0; background: black; z-index: 5000; display: none; flex-direction: column; zoom: 1.4925; }
+        .p-bar { width: 100%; height: 70px; padding: 0 30px; background: #111; border-bottom: 1px solid #222; display: flex; gap: 20px; align-items: center; z-index: 20; zoom: 0.67; }
         .p-wrapper { width: 100%; flex: 1; position: relative; background: #000; }
         iframe { width: 100%; height: 100%; border: none; }
-        .p-sidebar { position: absolute; top: 0; right: 0; height: 100%; width: 400px; background: rgba(10, 10, 10, 0.95); border-left: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(30px); transform: translateX(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 15; display: flex; flex-direction: column; box-shadow: -20px 0 50px rgba(0,0,0,0.5); }
+        .p-sidebar { position: absolute; top: 0; right: 0; height: 149.25%; width: 597px; background: rgba(10, 10, 10, 0.95); border-left: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(30px); transform: translateX(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 15; display: flex; flex-direction: column; box-shadow: -20px 0 50px rgba(0,0,0,0.5); zoom: 0.67; }
         .p-sidebar.open { transform: translateX(0); }
         .sb-head { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
         .sb-head h3 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; }
@@ -199,12 +200,21 @@
     <div id="global-loader" class="loader"><div class="spin"></div></div>
 
     <div id="login-overlay">
-        <div class="login-box">
-            <h2 style="margin-bottom:20px; font-weight:800">Welcome to Vemera</h2>
-            <p style="color:#888; margin-bottom:30px">Create a local profile to save your history.</p>
-            <input type="text" id="u-name" class="login-input" placeholder="Username (New)">
-            <input type="password" id="u-pass" class="login-input" placeholder="Password">
-            <button class="btn btn-primary" style="width:100%; justify-content:center" onclick="app.login()">START WATCHING</button>
+        <div class="login-box" style="display:flex; flex-direction:column; gap:15px; align-items:center">
+            <img src="navlogo.png" style="height:50px; margin-bottom:10px">
+            <h2 style="font-weight:800; margin-bottom:5px">Welcome Back</h2>
+            <p style="color:#888; font-size:0.9rem; margin-bottom:15px; text-align:center">Sign in to sync your watchlist and history.</p>
+            
+            <input type="text" id="u-name" class="login-input" placeholder="Username" style="margin-bottom:0">
+            <input type="password" id="u-pass" class="login-input" placeholder="Password" style="margin-bottom:0">
+            
+            <div style="display:flex; gap:10px; width:100%; margin-top:10px">
+                <button class="btn btn-primary" style="width:100%; justify-content:center" onclick="app.login()">Log In</button>
+            </div>
+            
+            <div style="width:100%; height:1px; background:#333; margin:10px 0"></div>
+            
+            <button class="btn" style="width:100%; justify-content:center; color:#888; font-size:0.9rem" onclick="app.guest()">Continue as Guest</button>
         </div>
     </div>
 
@@ -331,7 +341,7 @@
     </div>
 
     <div id="modal-detail" class="modal-over"> <div class="modal"> <button class="btn-icon" style="position:absolute; top:20px; right:20px; z-index:100" onclick="app.closeModals()">✕</button> <div class="modal-left"> <img id="dm-poster" class="modal-poster"> </div> <div class="modal-right"> <div id="dm-meta" class="dm-meta"></div> <h1 id="dm-title" style="font-size:3rem; font-weight:800; line-height:1; margin-bottom:20px">Title</h1> <p id="dm-desc"></p> <div id="dm-mov" style="display:none"> <div style="display:flex; gap:15px; margin-bottom: 30px"> <button class="btn btn-primary" id="dm-play">▶ PLAY MOVIE</button> <button class="btn btn-primary" id="dm-trailer-mov" style="background: #ef4444; border-color: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);">Trailer</button> <button class="btn btn-glass" id="dm-wl-mov" style="width: 50px; padding: 0; justify-content: center;">+</button> </div> <div id="dm-col-wrap" style="display:none; margin-top:10px;"> <h3 id="dm-col-title" style="color:var(--primary); margin-bottom:10px">Collection</h3> <div class="col-list" id="dm-col-list"></div> </div> </div> <div id="dm-tv" style="display:none"> <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center"> <div style="display:flex; gap:15px; align-items:center"> <h3 style="font-weight:700">Episodes</h3> <button class="btn btn-primary" id="dm-trailer-tv" style="padding: 5px 15px; font-size: 0.8rem; background: #ef4444; border-color: #ef4444;">Trailer</button> <button class="btn btn-glass" id="dm-wl-tv" style="padding: 5px 15px; font-size: 0.8rem;">+ WL</button> </div> <select id="dm-season" class="custom-select" onchange="app.renderEps(this.value)"></select> </div> <div class="ep-grid" id="dm-eps"></div> </div> </div> </div> </div>
-    <div id="player"> <div class="p-bar"> <button class="btn btn-glass" onclick="player.close()">EXIT</button> <select id="srv-sel" class="custom-select" onchange="player.setServer(this.value)"></select> <div style="flex:1"></div> <button class="btn btn-glass" style="margin-right:10px" onclick="player.info()">INFO</button> <button class="btn btn-primary" id="p-next" style="display:none; margin-right:10px" onclick="player.next()">NEXT EP</button> <button class="btn btn-primary" onclick="player.toggleSb()">LIST</button> </div> <div class="p-wrapper"> <iframe id="iframe" allowfullscreen></iframe> <div class="p-sidebar" id="sidebar"> <div class="sb-head"> <h3 id="sb-title">Content</h3> <button class="btn-icon" onclick="player.toggleSb()">✕</button> </div> <div style="padding:15px; border-bottom:1px solid rgba(255,255,255,0.1); display:none" id="sb-season-wrap"> <select id="sb-season" class="custom-select" style="width:100%" onchange="player.loadSbEps(this.value)"></select> </div> <div class="sb-list" id="sb-list"></div> </div> </div> </div>
+    <div id="player"> <div class="p-bar"> <button class="btn btn-glass" onclick="player.close()">EXIT</button> <select id="srv-sel" class="custom-select" onchange="player.setServer(this.value)"></select> <div style="flex:1"></div> <button class="btn btn-glass" style="margin-right:10px" onclick="player.info()">INFO</button> <button class="btn btn-primary" id="p-next" style="display:none; margin-right:10px" onclick="player.next()">NEXT EP</button> <button class="btn btn-primary" onclick="player.toggleSb()">LIST</button> </div> <div class="p-wrapper"> <iframe id="iframe" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" referrerpolicy="origin"></iframe> <div class="p-sidebar" id="sidebar"> <div class="sb-head"> <h3 id="sb-title">Content</h3> <button class="btn-icon" onclick="player.toggleSb()">✕</button> </div> <div style="padding:15px; border-bottom:1px solid rgba(255,255,255,0.1); display:none" id="sb-season-wrap"> <select id="sb-season" class="custom-select" style="width:100%" onchange="player.loadSbEps(this.value)"></select> </div> <div class="sb-list" id="sb-list"></div> </div> </div> </div>
     <div id="modal-settings" class="modal-over"> 
         <div class="modal box-modal"> 
             <h2>Settings</h2>
@@ -431,12 +441,12 @@
 
         // SERVERS - Supports TMDB ID or IMDb ID (tt...)
         const SERVERS = [
-            { n: "VidLink (Best)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://vidlink.pro/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
-            { n: "Videasy (best)", types: ['movie','tv'], u: (id,t,s,e) => `https://player.videasy.net/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
-            { n: "VidSrc (good)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://vidsrc-embed.ru/embed/${t}/${id}${t=='tv'?`/${s}-${e}`:''}` },
-            { n: "VidFast (fast)", types: ['movie','tv'], u: (id,t,s,e) => `https://vidfast.pro/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
-            { n: "VidZee (many langs)", types: ['movie','tv'], u: (id,t,s,e) => `https://player.vidzee.wtf/embed/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
-            { n: "RiveStream (most servers)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://rivestream.org/embed?type=${t}&id=${id}${t=='tv'?`&season=${s}&episode=${e}`:''}` },
+            { n: "VidLink (Premium)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://vidlink.pro/${t}/${id}${t=='tv'?`/${s}/${e}`:''}?primaryColor=6d57c8&secondaryColor=a1a1a1&iconColor=eaeaff&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=false` },
+            { n: "Videasy (Good)", types: ['movie','tv'], u: (id,t,s,e) => `https://player.videasy.net/${t}/${id}${t=='tv'?`/${s}/${e}`:''}?color=8B5CF6` },
+            { n: "VidSrc (Stable)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://vidsrc-embed.ru/embed/${t}/${id}${t=='tv'?`/${s}-${e}`:''}` },
+            { n: "VidFast (Fast)", types: ['movie','tv'], u: (id,t,s,e) => `https://vidfast.pro/${t}/${id}${t=='tv'?`/${s}/${e}`:''}?theme=9B59B6` },
+            { n: "VidZee (Multi-Lang)", types: ['movie','tv'], u: (id,t,s,e) => `https://player.vidzee.wtf/embed/${t}/${id}${t=='tv'?`/${s}/${e}`:''}` },
+            { n: "RiveStream (Multi-Source)", types: ['movie','tv','anime'], u: (id,t,s,e) => `https://rivestream.org/embed?type=${t}&id=${id}${t=='tv'?`&season=${s}&episode=${e}`:''}` },
         ];
 
         const app = {
@@ -466,20 +476,20 @@
 
                 // Slideshow: Movies + Series (No Anime)
                 let slide = [...trend, ...tv].filter(i => !(i.original_language === 'ja' && i.genre_ids?.includes(16)));
-                // Deduplicate
-                slide = Array.from(new Map(slide.map(item => [item.id, item])).values()).slice(0, 10);
+                // Deduplicate & Limit to 50
+                slide = Array.from(new Map(slide.map(item => [item.id, item])).values()).slice(0, 50);
                 
-                const seenSlides = JSON.parse(sessionStorage.getItem('v_slide_seen') || '[]');
-                const unseenSlides = slide.filter(i => !seenSlides.includes(i.id));
-                if (unseenSlides.length > 0) {
-                    slide = unseenSlides;
-                } else if (slide.length > 0) {
-                    sessionStorage.removeItem('v_slide_seen');
+                const seenSlides = JSON.parse(localStorage.getItem('v_slide_seen') || '[]');
+                let displayList = slide.filter(i => !seenSlides.includes(i.id));
+                
+                if (displayList.length < 5) {
+                    localStorage.removeItem('v_slide_seen');
+                    displayList = slide;
                 }
 
-                slide.sort(() => Math.random() - 0.5);
+                displayList.sort(() => Math.random() - 0.5);
 
-                app.slideshow(slide); 
+                app.slideshow(displayList); 
                 app.row('row-mov', trend.slice(0, 50));
                 
                 // Filter Top Series (No Anime)
@@ -524,6 +534,10 @@
                     app.hist(); 
                 }
             },
+            guest: () => {
+                document.getElementById('login-overlay').style.display = 'none';
+                app.state.user = null; // Ensure no user state
+            },
             logout: () => { localStorage.removeItem('v_user'); location.reload(); },
 
             slideshow: (list) => {
@@ -539,10 +553,10 @@
                     bg.style.opacity = 0;
                     
                     setTimeout(async () => {
-                        const seen = JSON.parse(sessionStorage.getItem('v_slide_seen') || '[]');
+                        const seen = JSON.parse(localStorage.getItem('v_slide_seen') || '[]');
                         if(!seen.includes(item.id)) {
                             seen.push(item.id);
-                            sessionStorage.setItem('v_slide_seen', JSON.stringify(seen));
+                            localStorage.setItem('v_slide_seen', JSON.stringify(seen));
                         }
 
                         const rating = await app.getRating(item.id, type);
@@ -636,9 +650,6 @@
                     d.className = 'card';
                     const year = (i.release_date || i.first_air_date || '').split('-')[0];
                     
-                    const isUpcoming = !isOmdb && (new Date(i.release_date || i.first_air_date) > new Date());
-                    const csBadge = isUpcoming ? '<div style="position:absolute; top:10px; left:10px; background:#ef4444; color:white; padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:700; z-index:10; box-shadow:0 2px 5px rgba(0,0,0,0.5)">SOON</div>' : '';
-                    
                     const posterSrc = isOmdb ? i.poster_path : `https://image.tmdb.org/t/p/w300${i.poster_path}`;
 
                     if(isHist) {
@@ -665,7 +676,6 @@
                         <img src="${posterSrc}" onerror="this.style.display='none'">
                         <div class="card-meta"><span>${year}</span><span id="r-${i.id}" class="c-rating"></span></div>
                         <div class="card-wl" id="wl-btn-${i.id}" onclick="event.stopPropagation(); app.toggleWl({id:'${i.id}', type:'${type}', poster_path:'${i.poster_path}', title:'${(i.title||i.name).replace(/'/g, "\'")}'})">+</div>
-                        ${csBadge}
                     `;
                     
                     setTimeout(() => app.updateWlBtn(i.id), 0);
@@ -1151,7 +1161,35 @@
                         const c = document.createElement('div'); c.className='card'; 
                         const isOmdb = String(i.id).startsWith('tt');
                         const pSrc = isOmdb ? i.poster_path : `https://image.tmdb.org/t/p/w300${i.poster_path}`;
-                        c.innerHTML=`<img src="${pSrc}"><div class="card-rm" onclick="event.stopPropagation(); app.toggleWl({id:'${i.id}'}); app.modals.watchlist()">✕</div>`;
+                        
+                        // Flag (Move to Watched)
+                        const flag = document.createElement('div');
+                        flag.className = 'card-flag';
+                        // Removed inline opacity so it relies on CSS hover effect
+                        
+                        flag.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--primary)" stroke-width="2" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>';
+                        flag.onclick = (e) => {
+                            e.stopPropagation();
+                            let finList = JSON.parse(localStorage.getItem('v_fin_'+app.state.user)||'[]');
+                            const idx = finList.findIndex(x=>String(x.id)===String(i.id));
+                            if(idx === -1) app.toggleFin(i); // Add to finished only if not present
+                            
+                            app.toggleWl(i);  // Remove from watchlist
+                            app.modals.watchlist(); // Refresh
+                        };
+                        
+                        const rm = document.createElement('div');
+                        rm.className = 'card-rm';
+                        rm.innerText = '✕';
+                        rm.onclick = (e) => { e.stopPropagation(); app.toggleWl(i); app.modals.watchlist(); };
+                        
+                        const img = document.createElement('img');
+                        img.src = pSrc;
+                        
+                        c.appendChild(img);
+                        c.appendChild(flag);
+                        c.appendChild(rm);
+                        
                         c.onclick = () => { app.open(i.id, i.type); app.closeModals(); };
                         l.appendChild(c);
                     });
@@ -1630,7 +1668,19 @@
             },
             setServer: (i) => {
                 i = parseInt(i);
-                document.getElementById('iframe').src = SERVERS[i].u(app.state.cur.id, (app.state.cur.type=='anime'?'tv':app.state.cur.type), player.ep?.s, player.ep?.e);
+                const ifr = document.getElementById('iframe');
+                ifr.src = SERVERS[i].u(app.state.cur.id, (app.state.cur.type=='anime'?'tv':app.state.cur.type), player.ep?.s, player.ep?.e);
+                
+                if (SERVERS[i].n.includes("Videasy")) {
+                    ifr.style.width = "100%";
+                    ifr.style.height = "100%";
+                    ifr.style.zoom = "0.8";
+                } else {
+                    ifr.style.width = "100%";
+                    ifr.style.height = "100%";
+                    ifr.style.zoom = "1";
+                }
+
                 app.saveHist(app.state.cur, player.ep?.s||1, player.ep?.e||1, i);
             },
             toggleSb: (force) => { 
